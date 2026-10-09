@@ -211,6 +211,9 @@ export default function QuickBookingWidget({
 
   const [service, setService] = useState<HomeService>(initialService);
   const [airportMode, setAirportMode] = useState<AirportMode>('pickup');
+  // Round trips can start at the airport or at the customer's address (swap button)
+  const [roundFromAirport, setRoundFromAirport] = useState(false);
+  const airportFirst = airportMode === 'pickup' || (airportMode === 'round' && roundFromAirport);
   const [terminal, setTerminal] = useState<Terminal>('T1');
   const [localPackageId, setLocalPackageId] = useState(
     () => localPackages.find((p) => p.label === 'Full-day')?.id ?? localPackages[0]?.id ?? ''
@@ -319,7 +322,7 @@ export default function QuickBookingWidget({
       ? `Add Stop ${activeModal.index + 1}`
       : activeModal.kind === 'drop' && service === 'outstation'
         ? 'Select Destination'
-        : activeModal.kind === 'drop' || (service === 'airport' && airportMode === 'pickup')
+        : activeModal.kind === 'drop' || (service === 'airport' && airportFirst)
           ? 'Select Drop Location'
           : 'Select Pickup Location';
 
@@ -360,7 +363,7 @@ export default function QuickBookingWidget({
 
     if (service === 'airport') {
       if (!cityLocation) {
-        const field = airportMode === 'pickup' ? 'drop' : 'pickup';
+        const field = airportFirst ? 'drop' : 'pickup';
         setErrors({ [field]: `Enter a ${field} address in Bangalore` });
         setActiveModal({ kind: 'city' });
         return;
@@ -369,8 +372,8 @@ export default function QuickBookingWidget({
       await searchFares({
         serviceType: 'airport',
         tripType: airportMode === 'round' ? 'round' : 'oneway',
-        pickup: airportMode === 'pickup' ? airport : cityLocation,
-        drop: airportMode === 'pickup' ? cityLocation : airport,
+        pickup: airportFirst ? airport : cityLocation,
+        drop: airportFirst ? cityLocation : airport,
         date: travelDate,
         time: travelTime,
         routeSlug: airportRouteSlug,
@@ -452,9 +455,9 @@ export default function QuickBookingWidget({
   const airportAddressField = (
     <LocationTrigger
       value={cityLocation}
-      tone={airportMode === 'pickup' ? 'drop' : 'pickup'}
-      placeholder={airportMode === 'pickup' ? 'Drop address or pincode in Bangalore' : 'Pickup address or pincode in Bangalore'}
-      error={airportMode === 'pickup' ? errors.drop : errors.pickup}
+      tone={airportFirst ? 'drop' : 'pickup'}
+      placeholder={airportFirst ? 'Drop address or pincode in Bangalore' : 'Pickup address or pincode in Bangalore'}
+      error={airportFirst ? errors.drop : errors.pickup}
       onOpen={() => setActiveModal({ kind: 'city' })}
       onClear={() => setCityLocation(null)}
     />
@@ -530,7 +533,7 @@ export default function QuickBookingWidget({
               ]}
             />
             <div className="relative space-y-2">
-              {airportMode === 'pickup' ? (
+              {airportFirst ? (
                 <>
                   {airportRow}
                   {airportAddressField}
@@ -541,12 +544,14 @@ export default function QuickBookingWidget({
                   {airportRow}
                 </>
               )}
-              {airportMode !== 'round' && (
-                <SwapButton
-                  label="Swap pickup and drop"
-                  onClick={() => setAirportMode(airportMode === 'pickup' ? 'drop' : 'pickup')}
-                />
-              )}
+              <SwapButton
+                label="Swap pickup and drop"
+                onClick={() => {
+                  if (airportMode === 'round') setRoundFromAirport((v) => !v);
+                  else setAirportMode(airportMode === 'pickup' ? 'drop' : 'pickup');
+                  setErrors({});
+                }}
+              />
             </div>
           </>
         )}

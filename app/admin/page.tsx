@@ -316,6 +316,16 @@ export default function AdminDashboardPage() {
       </header>
 
       <main className="mx-auto w-full max-w-7xl flex-1 space-y-6 px-4 py-6 sm:px-6 sm:py-8 lg:px-8">
+        {data && !data.persistent && (
+          <div role="alert" className="flex items-start gap-3 rounded-2xl border border-amber-300 bg-amber-50 px-4 py-3 text-sm text-amber-900">
+            <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-amber-600" />
+            <p>
+              <strong>Database not connected.</strong> Bookings, enquiries and price changes are kept in temporary server
+              memory and will be lost on restart/redeploy. Add the Firebase environment variables (FIREBASE_PROJECT_ID,
+              FIREBASE_CLIENT_EMAIL, FIREBASE_PRIVATE_KEY) to save them permanently.
+            </p>
+          </div>
+        )}
         {/* TAB 1: OVERVIEW */}
         {activeTab === 'overview' && (
           <div className="animate-panel-in space-y-6">

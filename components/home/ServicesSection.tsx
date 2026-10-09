@@ -33,7 +33,7 @@ export default function ServicesSection({ fares }: { fares: ServiceFares }) {
     {
       title: 'Airport Transfers',
       icon: Plane,
-      photo: fleetPhotos['innova-crysta'][0], // white Innova Crysta
+      photo: fleetPhotos['innova-crysta'][0], // our Innova Crysta
       badges: [
         { label: '24/7', tone: 'amber' },
         { label: 'Flight Tracked', tone: 'glass' },
@@ -48,7 +48,7 @@ export default function ServicesSection({ fares }: { fares: ServiceFares }) {
     {
       title: 'Outstation Trips',
       icon: Mountain,
-      photo: fleetPhotos.innova[0], // white Toyota Innova
+      photo: fleetPhotos.innova[0], // our Toyota Innova
       badges: [{ label: 'Per-km billing', tone: 'glass' }],
       description: 'Weekend escapes to Mysore, Coorg, Ooty, Wayanad & beyond.',
       bullets: ['Transparent per-km fares, tolls paid by customer', 'Experienced hill-station chauffeurs', 'Multi-day round trips, up to 3 stops'],
@@ -96,6 +96,7 @@ export default function ServicesSection({ fares }: { fares: ServiceFares }) {
                     height={card.photo.height}
                     loading="lazy"
                     decoding="async"
+                    style={{ objectPosition: card.photo.position }}
                     className="h-full w-full object-cover transition-transform duration-700 ease-premium group-hover:scale-105"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/60 via-slate-900/5 to-transparent" />

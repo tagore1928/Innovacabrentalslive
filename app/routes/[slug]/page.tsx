@@ -537,6 +537,7 @@ export default async function RouteDetailPage({ params }: RoutePageProps) {
                           height={photo.height}
                           loading="lazy"
                           decoding="async"
+                          style={{ objectPosition: photo.position }}
                           className="h-full w-full object-cover transition-transform duration-700 ease-premium hover:scale-[1.03]"
                         />
                         <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950/60 to-transparent" />

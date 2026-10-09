@@ -34,7 +34,7 @@ import {
   minFare,
   routeFromFare,
 } from '@/lib/storefrontData';
-import { fleetPhotos, photoCredit } from '@/lib/fleetPhotos';
+import { heroPhoto } from '@/lib/fleetPhotos';
 
 export const revalidate = 60; // Revalidate dynamic Firestore data every minute
 
@@ -89,8 +89,8 @@ const homeFaqs = [
   },
 ];
 
-// Hero background photo (silver Innova Crysta), tinted light sky-blue
-const heroCar = fleetPhotos['innova-crysta'][3];
+// Hero background photo: our own silver Innova, tinted light sky-blue
+const heroCar = heroPhoto;
 
 export default async function HomePage() {
   const [vehicles, routes, localPackages] = await Promise.all([getVehicles(), getRoutes(), getLocalPackages()]);
@@ -141,7 +141,7 @@ export default async function HomePage() {
             height={heroCar.height}
             fetchPriority="high"
             decoding="async"
-            className="absolute inset-x-0 top-0 h-[560px] w-full object-cover object-[70%_center] opacity-90 saturate-[0.85] lg:inset-0 lg:h-full lg:object-[68%_center]"
+            className="absolute inset-x-0 top-0 h-[560px] w-full object-cover object-[60%_70%] opacity-90 saturate-[0.85] lg:inset-0 lg:h-full lg:object-[55%_62%]"
           />
           {/* Sky-blue colour wash over the photo */}
           <div className="absolute inset-x-0 top-0 h-[560px] bg-sky-300/45 mix-blend-color lg:inset-0 lg:h-full" />
@@ -162,7 +162,7 @@ export default async function HomePage() {
             </span>
 
             <h1 className="text-balance mt-6 animate-fade-up text-[2.35rem] font-extrabold leading-[1.05] tracking-tight text-ink [animation-delay:80ms] sm:text-5xl lg:text-[3.5rem]">
-              {siteConfig.seo.h1}
+              Innova Cab Rentals
             </h1>
 
             <p className="mt-5 max-w-xl animate-fade-up text-base font-medium leading-relaxed text-slate-600 [animation-delay:160ms] sm:text-lg">
@@ -214,14 +214,6 @@ export default async function HomePage() {
             <QuickBookingWidget {...widgetData} />
           </div>
         </div>
-        <a
-          href={heroCar.sourceUrl}
-          target="_blank"
-          rel="noopener noreferrer license"
-          className="absolute bottom-2 right-3 text-[10px] leading-snug text-slate-500/70 transition-colors hover:text-slate-700"
-        >
-          {photoCredit(heroCar)}
-        </a>
       </section>
 
       {/* Available cars, prices & T&Cs (after "See Fares") */}

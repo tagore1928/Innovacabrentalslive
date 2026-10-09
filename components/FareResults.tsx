@@ -84,6 +84,7 @@ function ResultCard({ car, trip, totalKm, days }: { car: FareResult; trip: TripP
             height={photo.height}
             loading="lazy"
             decoding="async"
+            style={{ objectPosition: photo.position }}
             className="h-full w-full object-cover"
           />
           <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-slate-950/60 to-transparent" />

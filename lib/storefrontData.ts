@@ -10,6 +10,7 @@ import type { LocalPackage, Route, Vehicle } from '@/lib/types';
 import type { WidgetDestination, WidgetLocalPackage } from '@/components/home/QuickBookingWidget';
 import type { FleetCardData } from '@/components/home/FleetSection';
 import type { SliderRoute } from '@/components/home/RouteCard';
+import { primaryPhoto } from '@/lib/fleetPhotos';
 
 export const formatINR = (n: number) => `₹${Math.round(n).toLocaleString('en-IN')}`;
 
@@ -121,6 +122,8 @@ export function buildFleetCards(fleet: Vehicle[]): FleetCardData[] {
     luggage: v.luggage,
     features: v.features,
     href: `/${v.id}-rental-bangalore`,
+    photo: primaryPhoto(v.id),
+    rates: v.rates,
     fares: [
       { label: 'Airport', value: fareOrRequest(v.rates?.airportFare) },
       { label: 'Per km', value: fareOrRequest(v.rates?.outstationPerKm) },
