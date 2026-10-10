@@ -6,6 +6,7 @@ import CtaBand from '@/components/ds/CtaBand';
 import FaqAccordion from '@/components/home/FaqAccordion';
 
 export const metadata = {
+  alternates: { canonical: '/faq' },
   title: `Frequently Asked Questions | Innova Cabs Bangalore | ${siteConfig.brand.name}`,
   description:
     'Comprehensive answers to questions about booking procedures, toll and driver allowance billing, luggage capacity in 7 & 8 seater Innova, and 24/7 airport and outstation services.',

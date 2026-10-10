@@ -7,6 +7,7 @@ import CtaBand from '@/components/ds/CtaBand';
 import Reveal from '@/components/home/Reveal';
 
 export const metadata = {
+  alternates: { canonical: '/about' },
   title: `About Us | 15 Years of Premium Innova Car Rental | ${siteConfig.brand.name}`,
   description: `Learn about ${siteConfig.brand.name} - ${siteConfig.trustClaims.yearsExperience.label} providing reliable, premium Toyota Innova and Crysta car rentals with professional chauffeurs in Bangalore.`,
   keywords: [

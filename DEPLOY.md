@@ -39,7 +39,7 @@ variables, **redeploy** (Deployments → … → Redeploy).
 
 1. Open `/admin/login`, sign in with `ADMIN_PASSWORD`.
 2. **Pricing & Tariffs:** enter each car's rates (empty = "Price on request").
-3. Firestore: the new cars (Ertiga) and 30 routes appear automatically from the
+3. Firestore: the new cars (Ertiga) and 33 routes appear automatically from the
    built-in catalogue; your edits are saved to Firestore.
 4. Optional: deploy `firestore.rules` from the Firebase console/CLI.
 5. Add your custom domain under Project Settings → Domains.

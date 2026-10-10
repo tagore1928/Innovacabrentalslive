@@ -1,3 +1,4 @@
+import type { Metadata } from 'next';
 import Link from 'next/link';
 import {
   ArrowRight,
@@ -12,6 +13,7 @@ import {
   ShieldCheck,
   Star,
   Users,
+  Wallet,
 } from 'lucide-react';
 import QuickBookingWidget from '@/components/home/QuickBookingWidget';
 import ServicesSection from '@/components/home/ServicesSection';
@@ -22,6 +24,7 @@ import FaqAccordion from '@/components/home/FaqAccordion';
 import BookButton from '@/components/home/BookButton';
 import Reveal from '@/components/home/Reveal';
 import FareResults from '@/components/FareResults';
+import TrustInfoSection from '@/components/home/TrustInfoSection';
 import { siteConfig } from '@/lib/siteConfig';
 import { getVehicles, getRoutes, getLocalPackages } from '@/lib/dataService';
 import {
@@ -34,7 +37,7 @@ import {
   minFare,
   routeFromFare,
 } from '@/lib/storefrontData';
-import { heroPhoto } from '@/lib/fleetPhotos';
+import { HeroBackdrop, HeroBand, HeroLead, HeroTitle } from '@/components/home/HeroScene';
 
 export const revalidate = 60; // Revalidate dynamic Firestore data every minute
 
@@ -89,8 +92,11 @@ const homeFaqs = [
   },
 ];
 
-// Hero background photo: our own silver Innova, tinted light sky-blue
-const heroCar = heroPhoto;
+
+export const metadata: Metadata = {
+  alternates: { canonical: '/' },
+};
+
 
 export default async function HomePage() {
   const [vehicles, routes, localPackages] = await Promise.all([getVehicles(), getRoutes(), getLocalPackages()]);
@@ -130,29 +136,18 @@ export default async function HomePage() {
       {/* 1. HERO + QUICK BOOKING WIDGET — light sky-blue & white theme    */}
       {/*    (no overflow-hidden: the calendar pop-up must extend past it) */}
       {/* ================================================================ */}
-      <section className="relative isolate z-10 pb-12 pt-28 sm:pt-32 lg:pb-16">
-        {/* Full-bleed car photo, tinted light sky-blue (was dark slate before) */}
-        <div className="pointer-events-none absolute inset-0 -z-10 overflow-hidden bg-porcelain" aria-hidden="true">
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={heroCar.src}
-            alt=""
-            width={heroCar.width}
-            height={heroCar.height}
-            fetchPriority="high"
-            decoding="async"
-            className="absolute inset-x-0 top-0 h-[560px] w-full object-cover object-[60%_70%] opacity-90 saturate-[0.85] lg:inset-0 lg:h-full lg:object-[55%_62%]"
-          />
-          {/* Sky-blue colour wash over the photo */}
-          <div className="absolute inset-x-0 top-0 h-[560px] bg-sky-300/45 mix-blend-color lg:inset-0 lg:h-full" />
-          <div className="absolute inset-x-0 top-0 h-[560px] bg-sky-200/25 lg:inset-0 lg:h-full" />
-          {/* Light scrims keep the copy readable: white on the left, photo visible on the right */}
-          <div className="absolute inset-x-0 top-0 h-[560px] bg-gradient-to-r from-white/90 via-sky-50/70 to-sky-100/20 lg:inset-0 lg:h-full lg:from-white/95 lg:via-sky-50/45 lg:via-40% lg:to-transparent" />
-          <div className="absolute inset-x-0 top-0 h-[560px] bg-gradient-to-b from-sky-100/40 via-transparent to-porcelain lg:inset-0 lg:h-full lg:via-transparent lg:to-porcelain/80" />
-        </div>
+      <section className="relative isolate z-10 pb-12 pt-24 sm:pt-32 lg:pb-16">
+        {/* Picture follows the selected service tab. Desktop: whole picture across the top, car on the right */}
+        {/* Start loading the default (airport) picture before the page script runs */}
+        <link rel="preload" as="image" href="/images/hero/hero-airport-960.webp" media="(max-width: 1023px)" />
+        <link rel="preload" as="image" href="/images/hero/hero-airport-1920.webp" media="(min-width: 1024px)" />
+        <HeroBackdrop className="-z-10 hidden lg:inset-x-0 lg:top-0 lg:block lg:aspect-[1920/1071]" />
+        {/* Mobile/tablet: picture band behind the header + heading, car bottom-right */}
+        <HeroBand className="inset-x-0 top-0 -z-10 h-[530px] sm:h-[680px] lg:hidden" />
 
-        <div className="section grid items-start gap-10 lg:grid-cols-[minmax(0,1.1fr)_minmax(0,0.9fr)]">
-          <div className="pt-2 lg:pt-6">
+        {/* Desktop: copy + widget stacked in a left column so the car stays visible on the right */}
+        <div className="section grid items-start gap-6 sm:gap-10 lg:grid-cols-[minmax(0,540px)_1fr] lg:gap-0">
+          <div className="relative min-w-0 pt-2 lg:col-start-1 [text-shadow:0_1px_12px_rgba(255,255,255,0.95)] lg:pt-4">
             <span className="inline-flex animate-fade-up items-center gap-2 rounded-full border border-live-500/20 bg-white/80 px-3 py-1.5 text-xs font-bold text-live-600 shadow-sm backdrop-blur-md">
               <span className="relative flex h-2 w-2">
                 <span className="absolute inline-flex h-full w-full animate-pulse-ring rounded-full bg-live-500" />
@@ -161,15 +156,15 @@ export default async function HomePage() {
               Booking open now · 24 hours
             </span>
 
-            <h1 className="text-balance mt-6 animate-fade-up text-[2.35rem] font-extrabold leading-[1.05] tracking-tight text-ink [animation-delay:80ms] sm:text-5xl lg:text-[3.5rem]">
-              Innova Cab Rentals
+            <h1 className="text-balance mt-4 animate-fade-up sm:mt-6 text-[1.95rem] font-extrabold leading-[1.05] tracking-tight text-ink [animation-delay:80ms] sm:text-5xl lg:text-[3.5rem]">
+              <HeroTitle /> <span className="block text-brand-700">in Bangalore</span>
             </h1>
 
-            <p className="mt-5 max-w-xl animate-fade-up text-base font-medium leading-relaxed text-slate-600 [animation-delay:160ms] sm:text-lg">
-              Chauffeur-driven Innova, Crysta &amp; Ertiga cabs — no advance payment.
+            <p className="mt-3 max-w-[78%] animate-fade-up text-base sm:mt-5 sm:max-w-xl font-semibold leading-relaxed text-slate-700 [animation-delay:160ms] sm:text-lg">
+              <HeroLead />
             </p>
 
-            <ul className="mt-7 flex animate-fade-up flex-wrap gap-2 [animation-delay:240ms]">
+            <ul className="mt-7 hidden animate-fade-up flex-wrap gap-2 [animation-delay:240ms]">
               {heroPills.map(({ label, icon: Icon, service }) => (
                 <li key={label}>
                   <BookButton
@@ -182,7 +177,7 @@ export default async function HomePage() {
               ))}
             </ul>
 
-            <p className="mt-8 flex animate-fade-up flex-wrap items-baseline gap-x-3 gap-y-1 [animation-delay:320ms]">
+            <p className="mt-8 hidden animate-fade-up flex-wrap items-baseline gap-x-3 gap-y-1 [animation-delay:320ms]">
               <span className="text-xs font-bold uppercase tracking-[0.14em] text-slate-500">
                 {airportFrom ? 'Airport transfers from' : 'Airport transfers'}
               </span>
@@ -196,21 +191,32 @@ export default async function HomePage() {
               )}
             </p>
 
-            <ul className="mt-6 flex animate-fade-up flex-wrap gap-x-6 gap-y-2 text-sm font-semibold text-slate-600 [animation-delay:400ms]">
-              <li className="flex items-center gap-1.5">
-                <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                {siteConfig.trustClaims.googleRating.value}-Star Rated · {siteConfig.trustClaims.happyCustomers.value} customers
+            {/* Mobile/tablet: room for the car in the picture band */}
+            <div className="h-[205px] sm:h-[290px] lg:hidden" aria-hidden="true" />
+
+            {/* Trust strip — compact single row on mobile */}
+            <ul className="mt-4 grid animate-fade-up grid-cols-[1.25fr_1fr_1fr] divide-x divide-amber-200/70 rounded-2xl border border-amber-200/70 bg-amber-50/80 py-2 text-[11px] font-semibold leading-tight text-slate-700 shadow-sm backdrop-blur [animation-delay:400ms] sm:text-sm lg:mt-6 lg:flex lg:flex-wrap lg:gap-x-6 lg:gap-y-2 lg:divide-x-0 lg:border-0 lg:bg-transparent lg:py-0 lg:shadow-none lg:backdrop-blur-none">
+              <li className="flex items-center gap-1.5 px-2.5 lg:px-0">
+                <Star className="h-4 w-4 shrink-0 fill-amber-400 text-amber-400" />
+                <span>
+                  {siteConfig.trustClaims.googleRating.value}-Star Rated
+                  <span className="block font-medium text-slate-500 sm:inline lg:text-slate-600"> · {siteConfig.trustClaims.happyCustomers.value} customers</span>
+                </span>
               </li>
-              <li className="flex items-center gap-1.5">
-                <ShieldCheck className="h-4 w-4 text-live-600" /> Verified chauffeurs
+              <li className="flex items-center gap-1.5 px-2.5 lg:px-0">
+                <ShieldCheck className="h-4 w-4 shrink-0 text-live-600" /> Verified chauffeurs
               </li>
-              <li className="flex items-center gap-1.5">
-                <Radar className="h-4 w-4 text-brand-600" /> Flight tracked
+              <li className="flex items-center gap-1.5 px-2.5 lg:px-0">
+                <Radar className="h-4 w-4 shrink-0 text-brand-600" /> Flight tracked
+              </li>
+              <li className="hidden items-center gap-1.5 lg:flex">
+                <Wallet className="h-4 w-4 shrink-0 text-brand-600" /> UPI, cards &amp; cash accepted
               </li>
             </ul>
+
           </div>
 
-          <div className="min-w-0">
+          <div className="min-w-0 lg:col-start-1 lg:mt-6">
             <QuickBookingWidget {...widgetData} />
           </div>
         </div>
@@ -320,6 +326,8 @@ export default async function HomePage() {
           </div>
         </Reveal>
       </section>
+
+      <TrustInfoSection />
 
       {/* ================================================================ */}
       {/* 7. FAQ                                                           */}

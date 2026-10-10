@@ -8,6 +8,7 @@
 
 import React from 'react';
 import Link from 'next/link';
+import { BreadcrumbJsonLd } from '@/components/seo/JsonLd';
 import { ArrowRight, ChevronRight, MapPin, MessageCircle, Phone, ShieldCheck, Star, Users } from 'lucide-react';
 import PackageSelector from '@/components/PackageSelector';
 import QuickBookingWidget from '@/components/home/QuickBookingWidget';
@@ -134,6 +135,7 @@ export default function LandingTemplate({
 
         <div className="section grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-10">
           <div className="lg:pt-6">
+            <BreadcrumbJsonLd items={[{ label: breadcrumb }]} />
             <nav aria-label="Breadcrumb" className="mb-5 flex flex-wrap items-center gap-1 text-xs font-semibold text-slate-500">
               <Link href="/" className="hover:text-brand-700">
                 Home

@@ -38,7 +38,7 @@ import {
 import LocationAutocompleteModal from '@/components/LocationAutocompleteModal';
 import SegmentedControl from '@/components/home/SegmentedControl';
 import DatePickerField, { addDays, fromDateKey, toDateKey } from '@/components/home/DatePickerField';
-import { BOOK_EVENT, type HomeService } from '@/components/home/scrollToBook';
+import { BOOK_EVENT, SERVICE_EVENT, type HomeService } from '@/components/home/scrollToBook';
 import { useBookingFlow } from '@/context/BookingFlowContext';
 import { LocationData } from '@/lib/googlePlaces';
 import { cn } from '@/lib/cn';
@@ -47,6 +47,7 @@ export interface WidgetDestination {
   slug: string;
   destination: string;
   distanceKm: number;
+  photo?: string;
 }
 
 export interface WidgetLocalPackage {
@@ -210,6 +211,11 @@ export default function QuickBookingWidget({
   const { searchFares, search } = useBookingFlow();
 
   const [service, setService] = useState<HomeService>(initialService);
+
+  // Let the homepage hero backdrop follow the selected service
+  useEffect(() => {
+    window.dispatchEvent(new CustomEvent<HomeService>(SERVICE_EVENT, { detail: service }));
+  }, [service]);
   const [airportMode, setAirportMode] = useState<AirportMode>('pickup');
   // Round trips can start at the airport or at the customer's address (swap button)
   const [roundFromAirport, setRoundFromAirport] = useState(false);
@@ -476,7 +482,7 @@ export default function QuickBookingWidget({
       <div className="mb-4 flex items-center justify-between gap-3">
         <div>
           <h2 className="text-lg font-extrabold tracking-tight text-ink">Quick Fare Estimate</h2>
-          <p className="text-xs font-medium text-slate-500">Instant estimate · ₹0 advance · Pay after the trip</p>
+          <p className="text-xs font-medium text-slate-500">Instant estimate · Pay after the trip</p>
         </div>
         <span className="chip-live">
           <span className="h-1.5 w-1.5 rounded-full bg-live-500" /> Live
@@ -628,12 +634,20 @@ export default function QuickBookingWidget({
                         clearError('drop');
                       }}
                       className={cn(
-                        'pill shrink-0 transition hover:border-brand-300 hover:text-brand-700',
-                        selected && 'border-brand-300 bg-brand-50 text-brand-700'
+                        'flex shrink-0 items-center gap-2 rounded-2xl border border-slate-200/80 bg-white py-1.5 pl-1.5 pr-3 text-left transition hover:border-brand-300',
+                        selected && 'border-brand-400 bg-brand-50 ring-2 ring-brand-500/15'
                       )}
                     >
-                      {d.destination}
-                      <span className="text-slate-400">{d.distanceKm} km</span>
+                      {d.photo && (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img src={d.photo} alt="" width={40} height={40} loading="lazy" decoding="async" className="h-9 w-9 shrink-0 rounded-xl object-cover" />
+                      )}
+                      <span className="leading-tight">
+                        <span className={cn('block whitespace-nowrap text-xs font-bold', selected ? 'text-brand-700' : 'text-ink')}>
+                          {d.destination.split(' (')[0].split(' / ')[0]}
+                        </span>
+                        <span className="block text-[11px] font-medium text-slate-400">{d.distanceKm} km</span>
+                      </span>
                     </button>
                   );
                 })}
@@ -663,15 +677,27 @@ export default function QuickBookingWidget({
                     aria-checked={selected}
                     onClick={() => setLocalPackageId(pkg.id)}
                     className={cn(
-                      'rounded-2xl border px-2 py-2.5 text-left transition-all',
+                      'relative rounded-2xl border px-2.5 py-2.5 text-left transition-all',
                       selected
                         ? 'border-brand-500 bg-brand-50 ring-4 ring-brand-500/10'
                         : 'border-slate-200/80 bg-white hover:border-brand-300'
                     )}
                   >
-                    <span className="block text-[13px] font-extrabold text-ink">{pkg.label}</span>
+                    <span
+                      aria-hidden="true"
+                      className={cn(
+                        'absolute right-2 top-2 flex h-4 w-4 items-center justify-center rounded-full border-2',
+                        selected ? 'border-brand-600' : 'border-slate-300'
+                      )}
+                    >
+                      {selected && <span className="h-2 w-2 rounded-full bg-brand-600" />}
+                    </span>
+                    <span className="block pr-5 text-[13px] font-extrabold text-ink">{pkg.label}</span>
                     <span className="block text-[11px] font-semibold text-slate-500">{pkg.meta}</span>
-                    <span className="mt-1 block text-[11px] font-bold text-brand-700">{pkg.fareLabel}</span>
+                    {/* Price shown only once set in Admin → Pricing */}
+                    {pkg.fareLabel !== 'On request' && (
+                      <span className="mt-1 block text-[11px] font-bold text-brand-700">{pkg.fareLabel}</span>
+                    )}
                   </button>
                 );
               })}
@@ -680,11 +706,12 @@ export default function QuickBookingWidget({
         )}
       </div>
 
-      {/* Dates + time */}
-      <div className="mt-4 space-y-3">
+      {/* Dates + time — one compact row (design: mobile compact) */}
+      <div className={cn('mt-4 grid gap-2', showReturn ? 'grid-cols-3' : 'grid-cols-2')}>
         {today && minDate && maxDate ? (
-          <div className={cn('grid gap-3', showReturn && 'sm:grid-cols-2')}>
+          <>
             <DatePickerField
+              compact
               value={date}
               onChange={changePickupDate}
               minDate={minDate}
@@ -694,6 +721,8 @@ export default function QuickBookingWidget({
             />
             {showReturn && (
               <DatePickerField
+                compact
+                popupAlign="center"
                 value={returnDate}
                 onChange={setReturnDate}
                 minDate={date ? fromDateKey(date) : minDate}
@@ -702,25 +731,20 @@ export default function QuickBookingWidget({
                 label="Return date"
               />
             )}
-          </div>
+          </>
         ) : (
-          <div>
-            <span className="label">Travel date</span>
-            <div className="shimmer h-[46px] rounded-2xl" />
-          </div>
+          <div className={cn('shimmer h-[56px] rounded-2xl', showReturn && 'col-span-2')} />
         )}
 
-        <div>
-          <label htmlFor="pickup-time" className="label">
-            Pickup time
-          </label>
-          <div className="relative">
-            <Clock className="pointer-events-none absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
+        <label className="field relative flex min-h-[56px] cursor-pointer items-center gap-2 px-2.5 py-2 focus-within:border-brand-500 focus-within:bg-white focus-within:ring-4 focus-within:ring-brand-500/10 sm:px-3">
+          
+          <span className="min-w-0 flex-1 leading-tight">
+            <span className="block truncate text-[10px] font-bold uppercase tracking-[0.06em] text-slate-500">Pickup time</span>
             <select
               id="pickup-time"
               value={time}
               onChange={(e) => setTime(e.target.value)}
-              className="field block appearance-none pl-11 pr-10"
+              className="block w-full cursor-pointer appearance-none truncate bg-transparent p-0 text-[13px] font-bold text-ink focus:outline-none"
             >
               {timeSlots.length === 0 && <option value={DEFAULT_TIME}>9:00 AM</option>}
               {timeSlots.map((slot) => (
@@ -729,9 +753,8 @@ export default function QuickBookingWidget({
                 </option>
               ))}
             </select>
-            <span className="pointer-events-none absolute right-4 top-1/2 -translate-y-1/2 text-slate-400">▾</span>
-          </div>
-        </div>
+          </span>
+        </label>
       </div>
 
       <button

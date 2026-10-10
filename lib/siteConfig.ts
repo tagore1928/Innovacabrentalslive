@@ -47,6 +47,20 @@ export const siteConfig = {
     hours: 'Open 24/7',
   },
 
+  /** Accepted payment methods (client confirmed: all types accepted). */
+  payments: {
+    methods: ['UPI (GPay, PhonePe, Paytm)', 'Cash', 'Debit & credit cards', 'Bank transfer (NEFT / IMPS)'],
+    schema: 'Cash, UPI, Credit Card, Debit Card, Bank Transfer',
+    advance: 'No advance payment needed to book. Pay after the trip.',
+  },
+
+  /** Booking policies shown in fare T&Cs and the trust section. */
+  policies: {
+    cancellation: 'Free cancellation or rescheduling up to 4 hours before pickup.',
+    confirmation: 'Every booking is confirmed by our team on call or WhatsApp before the car is dispatched.',
+    tolls: 'Tolls, parking, state permits and entry taxes are paid by the customer.',
+  },
+
   services: [
     {
       id: 'airport',
@@ -131,10 +145,10 @@ export const siteConfig = {
   testimonials: [] as Testimonial[],
 
   seo: {
-    title: 'Innova Cabs Bangalore | Innova & Innova Crysta Rental',
-    h1: 'Innova Cabs Bangalore – Innova & Innova Crysta Rental',
+    title: 'Innova Cabs Bangalore | Innova Crysta & Hycross Rental',
+    h1: 'Innova Cab Rentals in Bangalore',
     metaDescription:
-      'Book Toyota Innova, Innova Crysta, and Hycross car rentals in Bangalore with experienced drivers. Airport transfers, local city use, and outstation trips available 24/7.',
+      'Book Innova, Innova Crysta, Hycross and Ertiga cabs in Bangalore for airport transfers, local rentals and outstation trips. Call or WhatsApp for fares.',
     primaryKeywords: [
       'Innova Cabs Bangalore',
       'Innova Rental Bangalore',

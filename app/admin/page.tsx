@@ -628,7 +628,7 @@ export default function AdminDashboardPage() {
             <div>
               <h2 className={panelTitle}>Fleet &amp; Vehicle Confirmation</h2>
               <p className="text-sm text-slate-600">
-                Vehicles flagged as unconfirmed (such as Hycross) remain hidden from customer vehicle selection until toggled active.
+                Vehicles switched off here are hidden from the website and fare results until toggled active again.
               </p>
             </div>
 

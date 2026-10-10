@@ -4,6 +4,7 @@ import { getVehicles, getRoutes, getLocalPackages } from '@/lib/dataService';
 import { siteConfig } from '@/lib/siteConfig';
 
 export const metadata = {
+  alternates: { canonical: '/outstation-cabs' },
   title: `Outstation Innova Cabs Bangalore | Mysore, Coorg, Ooty, Wayanad | ${siteConfig.brand.name}`,
   description:
     'Book outstation round-trip Innova, Crysta and Ertiga cabs from Bangalore with up to 3 stops on the way. Seasoned highway drivers and transparent per-km billing; tolls paid by customer.',
